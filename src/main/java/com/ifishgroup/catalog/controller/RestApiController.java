@@ -21,17 +21,16 @@ public class RestApiController {
     public static final Logger logger = LoggerFactory.getLogger(RestApiController.class);
 
     @Autowired
-    ProductService productService; //Service which will do all data retrieval/manipulation work
+    ProductService productService;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(value = "/product/", method = RequestMethod.GET)
     public ResponseEntity<List<Product>> listAllProducts() {
         List<Product> products = productService.findAllProducts();
-        if (products.isEmpty()) {
+        if (products == null || products.isEmpty()) {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
-            // You many decide to return HttpStatus.NOT_FOUND
         }
-        return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/product/{id}", method = RequestMethod.GET)
@@ -43,7 +42,7 @@ public class RestApiController {
             return new ResponseEntity(new CustomErrorType("Product with id " + id
                     + " not found"), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Product>(product, HttpStatus.OK);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/product/", method = RequestMethod.POST)
@@ -79,7 +78,7 @@ public class RestApiController {
         currentProduct.setCost(product.getCost());
 
         productService.updateProduct(currentProduct);
-        return new ResponseEntity<Product>(currentProduct, HttpStatus.OK);
+        return new ResponseEntity<>(currentProduct, HttpStatus.OK);
     }
 
 
@@ -102,7 +101,7 @@ public class RestApiController {
         logger.info("Deleting All Products");
 
         productService.deleteAllProducts();
-        return new ResponseEntity<Product>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
