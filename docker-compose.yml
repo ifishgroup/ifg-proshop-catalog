@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+
+  catalog:
+    image: ifg-proshop-catalog-service
+    build: .
+    depends_on:
+      - mysql
+    command: ["./wait-for.sh", "mysql:3306", "--", "java", "-jar", "/ifg-proshop-catalog.jar"]
+    ports:
+      - "8080"
+    environment:
+      - DATABASE_HOST=mysql
+      - DATABASE_USER=spring
+      - DATABASE_PASSWORD=password
+      - DATABASE_NAME=ifgproshop
+      - DATABASE_PORT=3306
+    volumes:
+      - ~/.gradle:/root/.gradle
+
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=spring
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=ifgproshop
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
