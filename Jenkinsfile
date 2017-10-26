@@ -17,11 +17,18 @@ try {
             }
 
             stage('build/unit/integration test') {
-                sh "docker run --rm -v ${env.WORKSPACE}:/usr/src/ -w /usr/src/ openjdk:8u141-jdk ./gradlew clean build"
+                try {
+                    sh "docker run --rm -v ${env.WORKSPACE}:/usr/src/ -w /usr/src/ openjdk:8u141-jdk ./gradlew clean build"
+                } catch (Exception e) {
+                    error "Failed: ${e}"
+                    throw (e)
+                } finally {
+                    junit allowEmptyResults: true, keepLongStdio: true, testResults: '**/build/test-results/**/*.xml'
+                }
             }
 
             stage('static code analysis') {
-                echo "run code analysis"
+                step( [ $class: 'JacocoPublisher' ] )
             }
 
             if (env.BRANCH_NAME =~ /(?i)^pr-/ || env.BRANCH_NAME == "master") {
