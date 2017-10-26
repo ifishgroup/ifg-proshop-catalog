@@ -17,7 +17,7 @@ try {
             }
 
             stage('build/unit/integration test') {
-                sh "docker run --rm -v ${env.WORKSPACE}:/usr/src/ -w /usr/src/ ./gradlew clean build"
+                sh "docker run --rm -v ${env.WORKSPACE}:/usr/src/ -w /usr/src/ openjdk:8u141-jdk ./gradlew clean build"
             }
 
             stage('static code analysis') {
